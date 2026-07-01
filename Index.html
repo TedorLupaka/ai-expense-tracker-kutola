@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' https://docs.google.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.google.com https://*.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://docs.google.com;">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #F4F6F9;
+            color: #333;
+            padding: 24px;
+            line-height: 1.5;
+        }
+
+        .banner {
+            background: linear-gradient(135deg, #1E293B, #0F172A);
+            color: #FFF;
+            padding: 24px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .banner .icon-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .banner .icon-container .material-icons {
+            font-size: 36px;
+            color: #38BDF8;
+        }
+
+        .banner h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .banner p {
+            font-size: 14px;
+            color: #94A3B8;
+            margin-top: 2px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 0.65fr 1.5fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .card {
+            background-color: #FFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #E2E8F0;
+            background-color: #F8FAFC;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1E293B;
+        }
+
+        .card-body {
+            padding: 20px;
+            position: relative;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #2563EB;
+            color: #FFF;
+        }
+
+        .btn-primary:hover {
+            background-color: #1D4ED8;
+        }
+
+        .btn-secondary {
+            background-color: #64748B;
+            color: #FFF;
+        }
+
+        .btn-secondary:hover {
+            background-color: #475569;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #CBD5E1;
+            color: #475569;
+        }
+
+        .btn-outline:hover {
+            background-color: #F1F5F9;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background-color: #F8FAFC;
+            border-radius: 6px;
+            border: 1px solid #E2E8F0;
+            margin-bottom: 16px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background-color: #DCFCE7;
+            color: #15803D;
+        }
+
+        .status-inactive {
+            background-color: #FEE2E2;
+            color: #B91C1C;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #CBD5E1;
+            outline: none;
+            background-color: #FFF;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+        }
+
+        .stat-box {
+            background-color: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0F172A;
+            margin-bottom: 2px;
+        }
+
+        .stat-lbl {
+            font-size: 11px;
+            font-weight: 500;
+            color: #64748B;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sheet-container {
+            width: 100%;
+            height: 350px;
+            border: none;
+            border-radius: 6px;
+        }
+
+        .sheet-placeholder {
+            height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #F8FAFC;
+            border: 1px dashed #CBD5E1;
+            border-radius: 6px;
+            color: #64748B;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            max-height: 300px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th {
+            background-color: #F8FAFC;
+            padding: 10px 12px;
+            font-weight: 600;
+            color: #475569;
+            border-bottom: 2px solid #E2E8F0;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #E2E8F0;
+            color: #334155;
+            white-space: nowrap;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        tr:hover {
+            background-color: #F8FAFC;
+        }
+
+        .badge {
+            display: inline-flex;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .badge-success {
+            background-color: #DCFCE7;
+            color: #166534;
+        }
+
+        .badge-failed {
+            background-color: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .badge-skipped {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: #1E293B;
+            color: #FFF;
+            padding: 12px 20px;
+            border-radius: 6px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            font-size: 14px;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .spinner {
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            font-size: 18px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="banner">
+        <div class="icon-container">
+            <span class="material-icons">receipt_long</span>
+        </div>
+        <div>
+            <h1>AI Expense Tracker</h1>
+            <p>Automated Receipt Processing (PDFs & Images) & Expense Logging</p>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <div class="column">
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Settings</h2>
+                </div>
+                <div class="card-body">
+                    <form id="settingsForm" onsubmit="handleSettingsSave(event)">
+                        <div class="form-group">
+                            <label for="driveFolderId">Google Drive Folder ID</label>
+                            <input type="text" id="driveFolderId" name="driveFolderId" class="form-control"
+                                value="<?= driveFolderId ?>" placeholder="Enter Folder Alpha-Numeric Hash" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maxReceipts">Maximum Receipts Per Run</label>
+                            <input type="number" id="maxReceipts" name="maxReceipts" class="form-control"
+                                value="<?= maxReceipts ?>" min="1" max="50" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="defaultCurrency">Default Currency</label>
+                            <input type="text" id="defaultCurrency" name="defaultCurrency" class="form-control"
+                                value="<?= defaultCurrency ?>" placeholder="e.g. ZMW, USD" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="autoCategorization">Auto Categorization Toggle</label>
+                            <select id="autoCategorization" name="autoCategorization" class="form-control">
+                                <option value="ON" <?=autoCategorization==='ON' ? 'selected' : '' ?>>ON</option>
+                                <option value="OFF" <?=autoCategorization==='OFF' ? 'selected' : '' ?>>OFF</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="llamaParseApiKey">LlamaParse API Key</label>
+                            <input type="password" id="llamaParseApiKey" name="llamaParseApiKey" class="form-control"
+                                placeholder="••••••••••••••••••••••••••••••••">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">
+                            <span class="material-icons">save</span> Save Configuration
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Processor Control</h2>
+                </div>
+                <div class="card-body">
+                    <div class="control-row">
+                        <div>
+                            <div style="font-size: 14px; font-weight: 600; color: #1E293B;">System State</div>
+                            <div style="font-size: 12px; color: #64748B;">Automated 1-minute loop execution status
+                            </div>
+                        </div>
+                        <div id="statusBadgeContainer">
+                            <span
+                                class="status-badge <? statusClass = (systemState === 'ON' ? 'status-active' : 'status-inactive'); ?><?= statusClass ?>">
+                                <?= systemState ?>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="actions-grid">
+                        <button id="toggleBtn" class="btn btn-primary" onclick="toggleSystemState()">
+                            <span class="material-icons">power_settings_new</span> Toggle Engine
+                        </button>
+                        <button id="runBtn" class="btn btn-secondary" onclick="triggerManualRun()">
+                            <span class="material-icons">play_arrow</span> Run Manual
+                        </button>
+                    </div>
+                    <button id="retryAllBtn" class="btn btn-outline"
+                        style="width: 100%; margin-top: 12px; color: #B91C1C; border-color: #FCA5A5;"
+                        onclick="triggerRetryAll()">
+                        <span class="material-icons">restart_alt</span> Clear Cache & Retry All
+                    </button>
+                    <button id="purgeBtn" class="btn"
+                        style="width: 100%; margin-top: 12px; background-color: #EF4444; color: #FFF; border: none;"
+                        onclick="triggerPurgeData()">
+                        <span class="material-icons">delete_forever</span> Purge Data & Restart Afresh
+                    </button>
+                    <button class="btn btn-outline" style="width: 100%; margin-top: 12px;" onclick="refreshData()">
+                        <span class="material-icons">refresh</span> Refresh Infrastructure Metrics
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="column">
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Expense Sheet</h2>
+                </div>
+                <div class="card-body" style="padding: 12px;">
+                    <? if (spreadsheetId) { ?>
+                    <iframe class="sheet-container"
+                        src="https://docs.google.com/spreadsheets/d/<?= spreadsheetId ?>/edit?rm=minimal"></iframe>
+                    <? } else { ?>
+                    <div class="sheet-placeholder">
+                        No tracking spreadsheet detected. Click "Refresh Infrastructure Metrics" to automatically
+                        trigger self-healing processes.
+                    </div>
+                    <? } ?>
+                </div>
+            </div>
+
+
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Processing Log</h2>
+                </div>
+                <div class="card-body" style="padding: 0;">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>File Name</th>
+                                    <th>Status</th>
+                                    <th>Message</th>
+                                    <th>Trigger</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logTableBody">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: #64748B; padding: 20px;">
+                                        Fetching
+                                        logs from ledger...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="toastNotification" class="toast">
+        <span id="toastIcon" class="material-icons spinner">sync</span>
+        <span id="toastMessage">Processing operation sequence...</span>
+    </div>
+
+    <script>
+        var currentState = '<?= systemState ?>';
+
+        function escapeHtml(string) {
+            var matchHtmlRegExp = /["'&<>]/;
+            var str = '' + string;
+            var match = matchHtmlRegExp.exec(str);
+            if (!match) return str;
+            var escape;
+            var html = '';
+            var index = 0;
+            var lastIndex = 0;
+            for (index = match.index; index < str.length; index++) {
+                switch (str.charCodeAt(index)) {
+                    case 34: escape = '&quot;'; break;
+                    case 38: escape = '&amp;'; break;
+                    case 39: escape = '&#39;'; break;
+                    case 60: escape = '&lt;'; break;
+                    case 62: escape = '&gt;'; break;
+                    default: continue;
+                }
+                if (lastIndex !== index) html += str.substring(lastIndex, index);
+                lastIndex = index + 1;
+                html += escape;
+            }
+            return lastIndex !== index ? html + str.substring(lastIndex, index) : html;
+        }
+
+        function showToast(message, icon, animate) {
+            var toast = document.getElementById('toastNotification');
+            var toastIcon = document.getElementById('toastIcon');
+            var toastMsg = document.getElementById('toastMessage');
+
+            toastIcon.innerText = icon || 'sync';
+            if (animate) {
+                toastIcon.classList.add('spinner');
+            } else {
+                toastIcon.classList.remove('spinner');
+            }
+            toastMsg.innerText = message;
+            toast.style.display = 'flex';
+        }
+
+        function hideToast() {
+            document.getElementById('toastNotification').style.display = 'none';
+        }
+
+        function refreshData() {
+            showToast('Refreshing synchronization pools...', 'sync', true);
+
+            google.script.run
+                .withSuccessHandler(function (stats) {
+                    google.script.run
+                        .withSuccessHandler(function (logs) {
+                            var tbody = document.getElementById('logTableBody');
+                            if (logs.length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #64748B; padding: 20px;">No operational execution history discovered.</td></tr>';
+                            } else {
+                                var html = '';
+                                for (var i = 0; i < logs.length; i++) {
+                                    var badgeClass = 'badge-success';
+                                    if (logs[i].status === 'FAILED') badgeClass = 'badge-failed';
+                                    if (logs[i].status === 'SKIPPED') badgeClass = 'badge-skipped';
+
+                                    html += '<tr>' +
+                                        '<td>' + escapeHtml(logs[i].timestamp) + '</td>' +
+                                        '<td title="' + escapeHtml(logs[i].fileName) + '">' + escapeHtml(logs[i].fileName) + '</td>' +
+                                        '<td><span class="badge ' + badgeClass + '">' + escapeHtml(logs[i].status) + '</span></td>' +
+                                        '<td title="' + escapeHtml(logs[i].message) + '">' + escapeHtml(logs[i].message) + '</td>' +
+                                        '<td>' + escapeHtml(logs[i].executionType) + '</td>' +
+                                        '</tr>';
+                                }
+                                tbody.innerHTML = html;
+                            }
+                            hideToast();
+                        })
+                        .withFailureHandler(function (err) {
+                            showToast('Error syncing execution history: ' + err.message, 'error', false);
+                        })
+                        .fetchRealTimeAuditLogs();
+                })
+                .withFailureHandler(function (err) {
+                    showToast('Error syncing performance analytics: ' + err.message, 'error', false);
+                })
+                .fetchStats();
+        }
+
+        function toggleSystemState() {
+            var nextState = currentState === 'ON' ? 'OFF' : 'ON';
+            showToast('Transitioning automation script blocks...', 'sync', true);
+
+            google.script.run
+                .withSuccessHandler(function (res) {
+                    currentState = res.systemState;
+                    var badgeContainer = document.getElementById('statusBadgeContainer');
+                    var badgeClass = currentState === 'ON' ? 'status-active' : 'status-inactive';
+                    badgeContainer.innerHTML = '<span class="status-badge ' + badgeClass + '">' + escapeHtml(currentState) + '</span>';
+                    showToast('System operational engine is now ' + currentState, 'check_circle', false);
+                    setTimeout(refreshData, 1000);
+                })
+                .withFailureHandler(function (err) {
+                    showToast('State configuration update rejected: ' + err.message, 'error', false);
+                })
+                .updateSystemConfiguration(nextState);
+        }
+
+        function triggerManualRun() {
+            showToast('Deploying background extraction routine...', 'sync', true);
+            document.getElementById('runBtn').disabled = true;
+
+            google.script.run
+                .withSuccessHandler(function (res) {
+                    document.getElementById('runBtn').disabled = false;
+                    if (res.status === 'COMPLETED') {
+                        showToast('Manual routine complete. Processed total of ' + res.processedCount + ' files.', 'check_circle', false);
+                    } else {
+                        showToast('Manual ingestion execution suspended: ' + res.reason, 'info', false);
+                    }
+                    setTimeout(refreshData, 1500);
+                })
+                .withFailureHandler(function (err) {
+                    document.getElementById('runBtn').disabled = false;
+                    showToast('Runtime operation engine crash: ' + err.message, 'error', false);
+                })
+                .executeManualRunNow();
+        }
+
+        function triggerRetryAll() {
+            showToast('Clearing cache and restarting extraction...', 'sync', true);
+            document.getElementById('retryAllBtn').disabled = true;
+
+            google.script.run
+                .withSuccessHandler(function (res) {
+                    document.getElementById('retryAllBtn').disabled = false;
+                    if (res.status === 'COMPLETED') {
+                        showToast('Retry complete. Processed total of ' + res.processedCount + ' files.', 'check_circle', false);
+                    } else {
+                        showToast('Retry execution suspended: ' + res.reason, 'info', false);
+                    }
+                    setTimeout(refreshData, 1500);
+                })
+                .withFailureHandler(function (err) {
+                    document.getElementById('retryAllBtn').disabled = false;
+                    showToast('Runtime operation engine crash: ' + err.message, 'error', false);
+                })
+                .executeRetryAllNow();
+        }
+
+        function triggerPurgeData() {
+            if (!confirm('Are you absolutely sure you want to delete all expenses and logs? This action cannot be undone.')) {
+                return;
+            }
+            showToast('Purging all spreadsheet data and logs...', 'sync', true);
+            document.getElementById('purgeBtn').disabled = true;
+
+            google.script.run
+                .withSuccessHandler(function (res) {
+                    document.getElementById('purgeBtn').disabled = false;
+                    if (res.success) {
+                        showToast('All data purged successfully.', 'check_circle', false);
+                    } else {
+                        showToast('Purge failed: ' + res.reason, 'error', false);
+                    }
+                    setTimeout(refreshData, 1500);
+                })
+                .withFailureHandler(function (err) {
+                    document.getElementById('purgeBtn').disabled = false;
+                    showToast('Runtime error during purge: ' + err.message, 'error', false);
+                })
+                .resetSpreadsheetData();
+        }
+
+        function handleSettingsSave(e) {
+            e.preventDefault();
+            showToast('Writing changes to properties registry...', 'sync', true);
+
+            var settings = {
+                driveFolderId: document.getElementById('driveFolderId').value,
+                maxReceipts: document.getElementById('maxReceipts').value,
+                defaultCurrency: document.getElementById('defaultCurrency').value,
+                autoCategorization: document.getElementById('autoCategorization').value
+            };
+
+            var apiKey = document.getElementById('llamaParseApiKey').value;
+            if (apiKey && apiKey.trim() !== '') {
+                settings.llamaParseApiKey = apiKey;
+            }
+
+            google.script.run
+                .withSuccessHandler(function (res) {
+                    showToast('Settings saved successfully.', 'check_circle', false);
+                    document.getElementById('llamaParseApiKey').value = '';
+                    setTimeout(refreshData, 1000);
+                })
+                .withFailureHandler(function (err) {
+                    showToast('Configuration write error: ' + err.message, 'error', false);
+                })
+                .saveSettings(settings);
+        }
+
+        // Interactive Lifecycle Initialization Sequence
+        window.onload = function () {
+            refreshData();
+        }
+    </script>
+
+</body>
+
+</html>
